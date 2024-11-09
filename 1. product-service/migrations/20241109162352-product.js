@@ -4,10 +4,9 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('Products', {
       id: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING, // UUID as STRING type
         primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
+        defaultValue: Sequelize.UUIDV4, // Automatically generate UUIDv4 as string
       },
       name: {
         type: Sequelize.STRING,
@@ -24,12 +23,12 @@ module.exports = {
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.fn('NOW'),
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'), // Use SQLite's current timestamp function
       },
       updatedAt: {
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.fn('NOW'),
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'), // Same for updatedAt
       },
     });
   },
