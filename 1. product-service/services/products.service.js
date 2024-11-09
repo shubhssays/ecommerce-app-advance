@@ -12,7 +12,6 @@ class ProductService {
             where: {
                 name
             },
-            transaction
         });
 
         if (existingProduct) {
@@ -24,7 +23,7 @@ class ProductService {
             name,
             description,
             category,
-        }, { transaction });
+        });
 
         return {
             message: 'Product added successfully',
@@ -39,7 +38,7 @@ class ProductService {
         const products = await ProductModel.findAndCountAll({
             limit,
             offset,
-            order: [['created_at', 'DESC']]
+            order: [['createdAt', 'DESC']]
         });
 
         if (products.count == 0) {
