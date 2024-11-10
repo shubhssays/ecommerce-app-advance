@@ -1,5 +1,4 @@
 const express = require("express");
-const logger = require("morgan");
 const bodyParser = require("body-parser");
 const config = require("config");
 
@@ -8,8 +7,12 @@ const app = express();
 
 const PORT = config.get("port");
 
-//Log requests to the console
-app.use(logger("dev"));
+const ServiceLogger = require("./utils/logger");
+const logger = new ServiceLogger(config.get("appName"));
+
+// Request logging middleware
+const createLoggingMiddleware = require("./middlewares/logging");
+app.use(createLoggingMiddleware(logger));
 
 //parse incoming requests data
 app.use(bodyParser.json());
