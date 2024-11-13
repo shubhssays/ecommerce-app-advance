@@ -68,7 +68,7 @@ class ProductDetailsService {
         const { product_id, page = 1, limit = 10 } = userInput;
         const offset = (Number(page) - 1) * Number(limit);
 
-        // Get all product details with pagination
+        // Get all product details by product ID
         const { count, rows: productDetails } = await ProductDetailsModel.findAndCountAll({
             where: { productId: product_id },
             limit,
@@ -107,6 +107,21 @@ class ProductDetailsService {
 
         return {
             message: 'All product details deleted successfully',
+        };
+    }
+
+    static async findProductDetailsByProductId(userInput) {
+        const { product_id } = userInput;
+
+        // Get product details by product ID
+        const productDetails = await ProductDetailsModel.findAll({
+            where: { productId: product_id },
+            order: [['createdAt', 'DESC']]
+        });
+
+        return {
+            message: 'Product details fetched successfully',
+            productDetails: productDetails.map(detail => detail.toJSON())
         };
     }
 }

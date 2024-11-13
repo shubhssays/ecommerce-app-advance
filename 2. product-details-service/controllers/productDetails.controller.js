@@ -25,6 +25,12 @@ class ProductDetailsController {
         const data = await ProductDetailsService.deleteProductDetails(validData);
         return RequestHandler.successHandler(request, reply, data);
     }
+
+    static async findProductDetailsByProductIdHandler(request, reply) {
+        const validData = request.userInput;
+        const data = await ProductDetailsService.findProductDetailsByProductId(validData);
+        return RequestHandler.successHandler(request, reply, data);
+    }
 }
 
 module.exports = ProductDetailsController;

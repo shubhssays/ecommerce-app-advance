@@ -1,6 +1,10 @@
 const ClientError = require("../errors/client.error");
 const GeneralError = require("../errors/general.error");
+const ServerError = require("../errors/server.error");
 const ProductModel = require('../config/models/products.model');
+const getServiceUrl = require('../utils/eurekaClient');
+const Axios = require('../utils/axios');
+const config = require('config');
 
 class ProductService {
     static async addProduct(userInput) {
@@ -109,9 +113,25 @@ class ProductService {
             throw new ClientError('Product not found');
         }
 
+        // finding product details from product details service
+        const productDetailsUrl = await getServiceUrl(config.get("appNameProductDetails"));
+
+        let productDetailsResponse;
+
+        try {
+            const axios = new Axios(productDetailsUrl);
+            productDetailsResponse = await axios.get(`/products-details/product/${product_id}`);
+        } catch (error) {
+            console.log('Error in fetching product details', error);
+            throw new ServerError('Error in fetching product details');
+        }
+
         return {
             message: 'Product details fetched successfully',
-            product: product.toJSON()
+            product: {
+                ...product.toJSON(),
+                details: productDetailsResponse?.data?.productDetails || []
+            }
         };
     }
 
