@@ -1,0 +1,8 @@
+const path = require("path");
+
+module.exports = {
+    'config': path.resolve("config",  "database", "dbConnect.js"),
+    'migrations-path': path.resolve(__dirname, "migrations"),
+    'models-path': path.resolve("config",  "models"),
+    'seeders-path': path.resolve("config",  "seeders"),
+};

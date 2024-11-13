@@ -1,0 +1,18 @@
+{
+    "port": "3003",
+    "eureka": {
+        "host": "localhost",
+        "port": "8761"
+    },
+    "elasticSearch": {
+        "url": "http://localhost:9200"
+    },
+    "logger": {
+        "level": "info",
+        "logstash": {
+            "host": "localhost",
+            "port": "5001"
+        }
+    },
+    "appName": "inventory-service"
+}
