@@ -14,5 +14,10 @@
             "port": "5001"
         }
     },
-    "appName": "product-service"
+    "appName": "product-service",
+    "appNameProductDetails": "product-details-service",
+    "appNameInventory": "inventory-service",
+    "appNameCart": "cart-service",
+    "appNameCheckout": "checkout-service",
+    "appNameNotification": "notification-service",
 }
