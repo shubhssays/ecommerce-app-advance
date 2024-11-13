@@ -113,6 +113,26 @@ class InventoryService {
             }
         };
     }
+
+    static async findProductDetails(userInput) {
+        // Fetch product details by product id and optionally by product detail id
+        const { product_id, product_detail_id } = userInput;
+
+        // Build the where clause based on the presence of product_detail_id
+        const whereClause = { productId: product_id };
+        if (product_detail_id) {
+            whereClause.productDetailId = product_detail_id;
+        }
+
+        const inventory = await InventoryModel.findOne({
+            where: whereClause
+        });
+
+        return {
+            message: 'Product details fetched successfully',
+            product: inventory?.toJSON() || {}
+        };
+    }
 }
 
 module.exports = InventoryService;

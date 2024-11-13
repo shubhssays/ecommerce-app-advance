@@ -70,9 +70,21 @@ const deleteProductInventoryDetailsSchema = z.object({
     }).uuid().optional(),
 });
 
+const findProductInInventoryDetailsSchema = z.object({
+    product_id: z.string({
+        required_error: "product_id is required",
+        invalid_type_error: "product_id must be a valid UUID",
+    }).uuid(),
+    product_detail_id: z.string({
+        required_error: "product_detail_id is required",
+        invalid_type_error: "product_detail_id must be a valid UUID",
+    }).uuid().optional(),
+});
+
 module.exports = {
     addProductToInventorySchema,
     updateProductToInventorySchema,
     getProductInventoryDetailsSchema,
     deleteProductInventoryDetailsSchema,
+    findProductInInventoryDetailsSchema
 }
