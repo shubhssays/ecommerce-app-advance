@@ -1,0 +1,13 @@
+{
+    "port": "3000",
+    "eureka": {
+        "host": "localhost",
+        "port": "8761"
+    },
+    "appNameProduct": "product-service",
+    "appNameProductDetails": "product-details-service",
+    "appNameInventory": "inventory-service",
+    "appNameCart": "cart-service",
+    "appNameCheckout": "checkout-service",
+    "appNameNotification": "notification-service",
+}
