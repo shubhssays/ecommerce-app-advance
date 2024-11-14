@@ -34,7 +34,7 @@ app.get("/health", (req, res) => {
     });
 });
 
-app.use("/inventory", require("./routes/inventory.routes"));
+app.use("/", require("./routes/inventory.routes"));
 
 // this should be the last route
 require("./routes/error.routes")(app);
