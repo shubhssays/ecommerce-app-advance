@@ -120,7 +120,7 @@ class ProductService {
 
         try {
             const axios = new Axios(productDetailsUrl);
-            productDetailsResponse = await axios.get(`/products-details/product/${product_id}`);
+            productDetailsResponse = await axios.get(`/product/${product_id}`);
         } catch (error) {
             console.log('Error in fetching product details', error);
             throw new ServerError('Error in fetching product details');
@@ -135,25 +135,50 @@ class ProductService {
         };
     }
 
-
     static async deleteProduct(userInput) {
         const { product_id } = userInput;
 
-        // Check if customer exists
-        const product = await ProductModel.findOne({
-            where: { id: product_id },
-            attributes: ['id']
-        });
+        const transaction = await ProductModel.sequelize.transaction();
 
-        if (!product) {
-            throw new ClientError('Product not found');
+        try {
+            // Check if product exists
+            const product = await ProductModel.findOne({
+                where: { id: product_id },
+                attributes: ['id'],
+                transaction
+            });
+
+            if (!product) {
+                throw new ClientError('Product not found');
+            }
+
+            // Delete product details from product details service
+            const productDetailsUrl = await getServiceUrl(config.get("appNameProductDetails"));
+            let deleteProductDetailsResponse;
+
+            try {
+                const axios = new Axios(productDetailsUrl);
+                deleteProductDetailsResponse = await axios.delete(`/${product_id}?skip_not_found_error=true`);
+            } catch (error) {
+                console.log('Error in deleting product details', error);
+                throw new ServerError('Error in deleting product details');
+            }
+
+            if (deleteProductDetailsResponse.status != 'success') {
+                throw new ServerError('Error in deleting product details');
+            }
+
+            await product.destroy({ transaction });
+
+            await transaction.commit();
+
+            return {
+                message: 'Product deleted successfully',
+            };
+        } catch (error) {
+            await transaction.rollback();
+            throw error;
         }
-
-        await product.destroy();
-
-        return {
-            message: 'Product deleted successfully',
-        };
     }
 }
 

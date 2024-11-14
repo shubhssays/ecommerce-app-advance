@@ -90,14 +90,14 @@ class ProductDetailsService {
     }
 
     static async deleteProductDetails(userInput) {
-        const { product_id } = userInput;
+        const { product_id, skip_not_found_error = false } = userInput;
 
         // Check if product detail exists
         const productDetails = await ProductDetailsModel.findAll({
             where: { productId: product_id }
         });
 
-        if (productDetails.length === 0) {
+        if (!skip_not_found_error && productDetails.length === 0) {
             throw new ClientError('Product details not found');
         }
 
