@@ -17,7 +17,7 @@ class RequestHandler {
     }
 
     static errorHandler({ request, response, data = null, error, code }) {
-        const responseData = { status: 'failed', message: error.message, data, };
+        const responseData = { status: code ==  200 ? 'success' : 'failed', message: error.message, data, };
         return response.status(code).send(responseData);
     }
 
