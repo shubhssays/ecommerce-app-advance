@@ -19,5 +19,5 @@
     "appNameProductDetails": "product-details-service",
     "appNameInventory": "inventory-service",
     "appNameCheckout": "checkout-service",
-    "appNameNotification": "notification-service",
+    "appNameNotification": "notification-service"
 }

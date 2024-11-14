@@ -9,5 +9,5 @@
     "appNameInventory": "inventory-service",
     "appNameCart": "cart-service",
     "appNameCheckout": "checkout-service",
-    "appNameNotification": "notification-service",
+    "appNameNotification": "notification-service"
 }
