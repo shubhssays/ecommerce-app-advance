@@ -1,4 +1,5 @@
 const { Eureka } = require('eureka-js-client');
+const Axios = require('./axios');
 const config = require('config');
 
 const instanceId = config.get('appName');
@@ -11,7 +12,7 @@ const eurekaClient = new Eureka({
         instanceId, // Unique ID for the instance
         hostName: 'localhost',
         ipAddr: '127.0.0.1',
-        statusPageUrl: `http://localhost:${config.get("port")}/health/status`, // URL for the health/status page
+        statusPageUrl: `http://localhost:${config.get("port")}/health`, // URL for the health/status page
         port: {
             '$': config.get("port"), // Port your service is running on
             '@enabled': true,
@@ -38,4 +39,13 @@ eurekaClient.start((error) => {
     }
 });
 
-module.exports = eurekaClient;
+async function getServiceUrl(serviceName, pickOne = true) {
+    const axios = new Axios(`http://${config.get("eureka.host")}:${config.get("eureka.port")}`);
+    const response = await axios.get(`/eureka/apps/${serviceName}`);
+    if(pickOne) {
+        return `http://${response.application.instance[0].hostName}:${response.application.instance[0].port['$']}`;
+    }
+    return response;
+}
+
+module.exports = getServiceUrl;
