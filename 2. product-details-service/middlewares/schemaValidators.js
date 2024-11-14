@@ -9,7 +9,8 @@ const schemaValidators = (schema) => (req, res, next) => {
         });
         next();
     } catch (error) {
-        throw new ClientError(error.errors.map((error) => error.message).join(", "));
+        const err = new ClientError(error?.errors?.map((error) => error.message).join(", ") || error.message);
+        throw err;
     }
 };
 

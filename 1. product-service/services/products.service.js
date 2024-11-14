@@ -61,6 +61,8 @@ class ProductService {
     static async updateProduct(userInput) {
         const { product_id, name, description, category } = userInput;
 
+        console.log('userInput', { product_id, name, description, category });
+
         // Check if product exists
         const product = await ProductModel.findOne({
             where: { id: product_id },
