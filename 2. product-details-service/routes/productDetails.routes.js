@@ -9,7 +9,7 @@ const { createProductDetailsSchema, updateProductDetailsSchema, getProductDetail
 router.post('/', schemaValidator(createProductDetailsSchema), routeHandler(ProductDetailsController.addProductDetailsHandler));
 router.put('/', schemaValidator(updateProductDetailsSchema), routeHandler(ProductDetailsController.updateProductDetailsHandler));
 router.get('/:product_id', schemaValidator(getProductDetailsSchema), routeHandler(ProductDetailsController.getAllProductDetailsHandler));
-router.get('/product/:product_id', schemaValidator(findProductDetailsSchema), routeHandler(ProductDetailsController.findProductDetailsByProductIdHandler));
+router.get('/product/:id', schemaValidator(findProductDetailsSchema), routeHandler(ProductDetailsController.findProductDetailsByProductIdHandler));
 router.delete('/:product_id', schemaValidator(deleteProductDetailsSchema), routeHandler(ProductDetailsController.deleteProductDetailsHandler));
 
 module.exports = router;

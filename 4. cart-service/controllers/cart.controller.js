@@ -10,7 +10,7 @@ class CartController {
 
     static async updateCartItemHandler(request, reply) {
         const validData = request.userInput;
-        const data = await CartService.updateCartItem(validData);
+        const data = await CartService.updateCartItemQuantity(validData);
         return RequestHandler.successHandler(request, reply, data);
     }
 

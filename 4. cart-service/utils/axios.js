@@ -40,6 +40,7 @@ class Axios {
     // GET request
     async get(url, params = {}, config = {}) {
         try {
+            console.log('GET request', url, params, config);
             const response = await this.client.get(url, { params, ...config });
             return response.data;
         } catch (error) {

@@ -1,6 +1,8 @@
 const ClientError = require("../errors/client.error");
 const GeneralError = require("../errors/general.error");
 const ProductDetailsModel = require("../config/models/productDetails.model");
+const getServiceUrl = require('../utils/eurekaClient');
+const Axios = require('../utils/axios');
 
 class ProductDetailsService {
     static async addProductDetails(userInput) {
@@ -15,6 +17,9 @@ class ProductDetailsService {
         // if (existingDetails) {
         //     throw new ClientError('Product details for this product already exist');
         // }
+
+        // Check if product exists
+        await ProductDetailsService.checkIfProductExists({ productId: product_id, skip_not_found_error: false, only_product: true });
 
         const newProductArr = details.map(detail => {
             return {
@@ -66,6 +71,10 @@ class ProductDetailsService {
 
     static async getAllProductDetails(userInput) {
         const { product_id, page = 1, limit = 10 } = userInput;
+
+        // Check if product exists
+        await ProductDetailsService.checkIfProductExists({ productId: product_id, skip_not_found_error: false, only_product: true });
+
         const offset = (Number(page) - 1) * Number(limit);
 
         // Get all product details by product ID
@@ -92,6 +101,9 @@ class ProductDetailsService {
     static async deleteProductDetails(userInput) {
         const { product_id, skip_not_found_error = false } = userInput;
 
+        // Check if product exists
+        await ProductDetailsService.checkIfProductExists({ productId: product_id, skip_not_found_error: false, only_product: true });
+
         // Check if product detail exists
         const productDetails = await ProductDetailsModel.findAll({
             where: { productId: product_id }
@@ -111,18 +123,41 @@ class ProductDetailsService {
     }
 
     static async findProductDetailsByProductId(userInput) {
-        const { product_id } = userInput;
+        const { id } = userInput;
 
         // Get product details by product ID
-        const productDetails = await ProductDetailsModel.findAll({
-            where: { productId: product_id },
+        let productDetails = await ProductDetailsModel.findOne({
+            where: { id: id },
             order: [['createdAt', 'DESC']]
         });
 
         return {
             message: 'Product details fetched successfully',
-            productDetails: productDetails.map(detail => detail.toJSON())
+            productDetails: productDetails?.toJSON() || {}
         };
+    }
+
+    static async checkIfProductExists({ productId, skip_not_found_error = true, only_product = true }) {
+        // Fetch product details
+        const productServiceUrl = await getServiceUrl(config.get("appNameProduct"));
+        console.log('productServiceUrl', productServiceUrl);
+        let productResponse;
+
+        const productDetailError = new ServerError('Error in fetching product details');
+
+        try {
+            const axios = new Axios(productServiceUrl);
+            productResponse = await axios.get(`/product/${product_detail_id}?skip_not_found_error=${skip_not_found_error}&only_product=${only_product}`);
+        } catch (error) {
+            console.log('Error in fetching product details', error);
+            throw productDetailError;
+        }
+
+        if (productResponse.status != 'success') {
+            throw productDetailError;
+        }
+
+        return productResponse?.product || {};
     }
 }
 

@@ -13,12 +13,7 @@ const addToCartSchema = z.object({
                 required_error: "quantity is required",
                 invalid_type_error: "quantity must be a number",
                 positive_error: "quantity must be a positive number",
-            }).int().positive(),
-    price: z.number({
-                required_error: "price is required",
-                invalid_type_error: "price must be a number",
-                positive_error: "price must be a positive number",
-            }).positive(),        
+            }).int().positive(),     
 });
 
 

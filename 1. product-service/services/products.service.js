@@ -104,21 +104,28 @@ class ProductService {
     }
 
     static async getProductDetails(userInput) {
-        const { product_id } = userInput;
+        const { product_id, skip_not_found_error = false, only_product = false } = userInput;
 
         // Check if product exists
         const product = await ProductModel.findOne({
             where: { id: product_id },
         });
 
-        if (!product) {
+        if (!skip_not_found_error && !product) {
             throw new ClientError('Product not found');
+        }
+
+        if (only_product) {
+            return {
+                message: 'Product details fetched successfully',
+                product: product?.toJSON()
+            };
         }
 
         // finding product details from product details service
         const productDetailsUrl = await getServiceUrl(config.get("appNameProductDetails"));
 
-        let productDetailsResponse;
+        let productDetailsResponse = {};
 
         try {
             const axios = new Axios(productDetailsUrl);
@@ -131,7 +138,7 @@ class ProductService {
         return {
             message: 'Product details fetched successfully',
             product: {
-                ...product.toJSON(),
+                ...product?.toJSON(),
                 details: productDetailsResponse?.data?.productDetails || []
             }
         };

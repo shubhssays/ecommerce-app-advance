@@ -1,18 +1,44 @@
 const ClientError = require("../errors/client.error");
-const GeneralError = require("../errors/general.error");
 const InventoryModel = require("../config/models/cart.model");
 const ServerError = require("../../../banking-app-basic/customer-service/errors/server.error");
 const Axios = require('../utils/axios');
 const config = require('config');
+const getServiceUrl = require('../utils/eurekaClient');
 
 class CartService {
 
     static async addItemToCart(userInput) {
         const { user_id, product_detail_id, quantity } = userInput;
 
+        // Fetch product details
+        const productDetailServiceUrl = await getServiceUrl(config.get("appNameProductDetails"));
+        let productDetailResponse;
+
+        const productDetailError = new ServerError('Error in fetching product details');
+
+        try {
+            const axios = new Axios(productDetailServiceUrl);
+            productDetailResponse = await axios.get(`/product/${product_detail_id}`);
+        } catch (error) {
+            console.log('Error in fetching product details', error);
+            throw productDetailError;
+        }
+
+        if (productDetailResponse.status != 'success') {
+            throw productDetailError;
+        }
+
+        if (Object.keys(productDetailResponse.data.productDetails).length === 0) {
+            throw new ClientError('Invalid product_detail_id');
+        }
+
+        const price = productDetailResponse.data.productDetails.price;
+        const productId = productDetailResponse.data.productDetails.productId;
+        const productDetailId = productDetailResponse.data.productDetails.id;
+
         // Check if the product is already in the cart
         const existingCartItem = await InventoryModel.findOne({
-            where: { userId: user_id, productId: product_id }
+            where: { userId: user_id, productId: productId, productDetailId: product_detail_id }
         });
 
         if (existingCartItem) {
@@ -24,28 +50,6 @@ class CartService {
             };
         }
 
-        // Fetch product details
-        const productDetailServiceUrl = await getServiceUrl(config.get("appNameProductDetails"));
-        let productDetailResponse;
-
-        const productDetailError = new ServerError('Error in fetching product details');
-
-        try {
-            const axios = new Axios(productDetailServiceUrl);
-            productDetailResponse = await axios.get(`/product-details/${product_detail_id}`);
-        } catch (error) {
-            console.log('Error in fetching product details', error);
-            throw productDetailError;
-        }
-
-        if (productDetailResponse.status != 'success') {
-            throw productDetailError;
-        }
-
-        const price = productDetailResponse.productDetails.price;
-        const productId = productDetailResponse.productDetails.productId;
-        const productDetailId = productDetailResponse.productDetails.id;
-
         // check if the product is in inventory
         const inventoryServiceUrl = await getServiceUrl(config.get("appNameInventory"));
         let inventoryResponse;
@@ -54,7 +58,7 @@ class CartService {
 
         try {
             const axios = new Axios(inventoryServiceUrl);
-            inventoryResponse = await axios.get(`/inventory/products/${productId}`);
+            inventoryResponse = await axios.get(`/product/${productId}`);
         } catch (error) {
             console.log('Error in fetching product from inventory', error);
             throw inventoryError;
@@ -64,10 +68,10 @@ class CartService {
             throw inventoryError;
         }
 
-        const inventoryProduct = inventoryResponse?.inventory || {};
+        const inventoryProduct = inventoryResponse?.data?.product || {};
         const availableQuantity = Number(inventoryProduct?.quantity || 0);
 
-        if(availableQuantity === 0) {
+        if (!inventoryProduct || availableQuantity === 0) {
             throw new ClientError('Product is out of stock');
         }
 
@@ -110,7 +114,7 @@ class CartService {
 
         try {
             const axios = new Axios(inventoryServiceUrl);
-            inventoryResponse = await axios.get(`/inventory/products/${cartItem.productId}`);
+            inventoryResponse = await axios.get(`/product/${cartItem.toJSON().productId}`);
         } catch (error) {
             console.log('Error in fetching product from inventory', error);
             throw inventoryError;
@@ -120,7 +124,7 @@ class CartService {
             throw inventoryError;
         }
 
-        const inventoryProduct = inventoryResponse?.inventory || {};
+        const inventoryProduct = inventoryResponse?.data?.product || {};
         const availableQuantity = Number(inventoryProduct?.quantity || 0);
 
         if (availableQuantity === 0) {
@@ -131,8 +135,10 @@ class CartService {
             throw new ClientError(`Only ${availableQuantity} items are available in inventory`);
         }
 
+        const updateCart = { quantity };
+
         // Update the quantity of the product in the cart
-        await cartItem.update({ quantity });
+        await cartItem.update(updateCart);
 
         return {
             message: 'Product quantity updated in cart successfully',

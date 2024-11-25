@@ -51,6 +51,16 @@ const getProductDetailsSchema = z.object({
         required_error: "product_id is required",
         invalid_type_error: "product_id must be a valid UUID",
     }).uuid(),
+    skip_not_found_error: z.string()
+        .transform((value) => value === 'true')
+        .refine((val) => typeof val === 'boolean', {
+            message: 'Invalid boolean value',
+        }).optional(),
+    only_product: z.string()
+        .transform((value) => value === 'true')
+        .refine((val) => typeof val === 'boolean', {
+            message: 'Invalid boolean value',
+        }).optional(),
 });
 
 const deleteProductSchema = z.object({

@@ -90,9 +90,9 @@ const deleteProductDetailsSchema = z.object({
 });
 
 const findProductDetailsSchema = z.object({
-    product_id: z.string({
-        required_error: "product_id is required",
-        invalid_type_error: "product_id must be a valid UUID",
+    id: z.string({
+        required_error: "id is required",
+        invalid_type_error: "id must be a valid UUID",
     }).uuid(),
 });
 
