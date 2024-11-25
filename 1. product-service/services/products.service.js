@@ -138,7 +138,7 @@ class ProductService {
     }
 
     static async deleteProduct(userInput) {
-        const { product_id } = userInput;
+        const { product_id, remove_details = false } = userInput;
 
         const transaction = await ProductModel.sequelize.transaction();
 
@@ -154,20 +154,22 @@ class ProductService {
                 throw new ClientError('Product not found');
             }
 
-            // Delete product details from product details service
-            const productDetailsUrl = await getServiceUrl(config.get("appNameProductDetails"));
-            let deleteProductDetailsResponse;
+            if (remove_details) {
+                // Delete product details from product details service
+                const productDetailsUrl = await getServiceUrl(config.get("appNameProductDetails"));
+                let deleteProductDetailsResponse;
 
-            try {
-                const axios = new Axios(productDetailsUrl);
-                deleteProductDetailsResponse = await axios.delete(`/${product_id}?skip_not_found_error=true`);
-            } catch (error) {
-                console.log('Error in deleting product details', error);
-                throw new ServerError('Error in deleting product details');
-            }
+                try {
+                    const axios = new Axios(productDetailsUrl);
+                    deleteProductDetailsResponse = await axios.delete(`/${product_id}?skip_not_found_error=true`);
+                } catch (error) {
+                    console.log('Error in deleting product details', error);
+                    throw new ServerError('Error in deleting product details');
+                }
 
-            if (deleteProductDetailsResponse.status != 'success') {
-                throw new ServerError('Error in deleting product details');
+                if (deleteProductDetailsResponse.status != 'success') {
+                    throw new ServerError('Error in deleting product details');
+                }
             }
 
             await product.destroy({ transaction });
