@@ -81,10 +81,27 @@ const findProductInInventoryDetailsSchema = z.object({
     }).uuid().optional(),
 });
 
+const deductProductInInventoryDetailsSchema = z.object({
+    product_id: z.string({
+        required_error: "product_id is required",
+        invalid_type_error: "product_id must be a valid UUID",
+    }).uuid(),
+    product_detail_id: z.string({
+        required_error: "product_detail_id is required",
+        invalid_type_error: "product_detail_id must be a valid UUID",
+    }).uuid(),
+    quantity: z.number({
+                required_error: "quantity is required",
+                invalid_type_error: "quantity must be a number",
+                positive_error: "quantity must be a positive number",
+            }).int().positive(),
+});
+
 module.exports = {
     addProductToInventorySchema,
     updateProductToInventorySchema,
     getProductInventoryDetailsSchema,
     deleteProductInventoryDetailsSchema,
-    findProductInInventoryDetailsSchema
+    findProductInInventoryDetailsSchema,
+    deductProductInInventoryDetailsSchema
 }

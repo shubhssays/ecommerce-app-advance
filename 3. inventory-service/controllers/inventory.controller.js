@@ -31,6 +31,12 @@ class InventoryController {
         const data = await InventoryService.findProductDetails(validData);
         return RequestHandler.successHandler(request, reply, data);
     }
+
+    static async deductProductFromInventoryHandler(request, reply) {
+        const validData = request.userInput;
+        const data = await InventoryService.deductProductFromInventory(validData);
+        return RequestHandler.successHandler(request, reply, data);
+    }
 }
 
 module.exports = InventoryController;

@@ -12,7 +12,7 @@ async function setupProxy() {
     const productDetailsServiceUrl = await getServiceUrl(config.get('appNameProductDetails'));
     const inventoryServiceUrl = await getServiceUrl(config.get('appNameInventory'));
     const cartServiceUrl = await getServiceUrl(config.get('appNameCart'));
-    // const checkoutServiceUrl = await getServiceUrl(config.get('appNameCheckout'));
+    const checkoutServiceUrl = await getServiceUrl(config.get('appNameCheckout'));
     // const notificationServiceUrl = await getServiceUrl(config.get('appNameNotification'));
 
     // Proxy for Product Service
@@ -43,12 +43,12 @@ async function setupProxy() {
         pathRewrite: { '^/cart': '' },
     }));
 
-    // // Proxy for Checkout Service
-    // app.use('/checkout', createProxyMiddleware({
-    //     target: checkoutServiceUrl,
-    //     changeOrigin: true,
-    //     pathRewrite: { '^/checkout': '' },
-    // }));
+    // Proxy for Checkout Service
+    app.use('/checkout', createProxyMiddleware({
+        target: checkoutServiceUrl,
+        changeOrigin: true,
+        pathRewrite: { '^/checkout': '' },
+    }));
 
     // // Proxy for Notification Service
     // app.use('/notification', createProxyMiddleware({

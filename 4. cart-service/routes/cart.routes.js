@@ -9,6 +9,6 @@ const { addToCartSchema, updateQuantityInCartSchema, getCartSchema, removeItemFr
 router.post('/', schemaValidator(addToCartSchema), routeHandler(CartController.addItemToCartHandler));
 router.put('/', schemaValidator(updateQuantityInCartSchema), routeHandler(CartController.updateCartItemHandler));
 router.get('/:user_id', schemaValidator(getCartSchema), routeHandler(CartController.getCartItemsHandler));
-router.delete('/:cart_id', schemaValidator(removeItemFromCartSchema), routeHandler(CartController.removeItemFromCartHandler));
+router.delete('/', schemaValidator(removeItemFromCartSchema), routeHandler(CartController.removeItemFromCartHandler));
 
 module.exports = router;

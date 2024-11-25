@@ -147,46 +147,72 @@ class CartService {
     }
 
     static async removeItemFromCart(userInput) {
-        const { cart_id } = userInput;
+        let { cart_ids, user_id } = userInput;
 
-        // Check if the product is in the cart
-        const cartItem = await InventoryModel.findOne({
-            where: { id: cart_id }
-        });
+        if (cart_ids && cart_ids.length > 0) {
+            cart_ids = cart_ids.replace(/\s+/g, '').split(',');
+            // Remove the specified products from the cart
+            await InventoryModel.destroy({
+                where: {
+                    id: cart_ids,
+                    userId: user_id
+                }
+            });
 
-        if (!cartItem) {
-            throw new ClientError('Product not found in cart');
+            return {
+                message: 'Specified products removed from cart successfully'
+            };
+        } else {
+            // Remove all products from the cart for the user
+            await InventoryModel.destroy({
+                where: {
+                    userId: user_id
+                }
+            });
+
+            return {
+                message: 'All products removed from cart successfully'
+            };
         }
-
-        // Remove the product from the cart
-        await cartItem.destroy();
-
-        return {
-            message: 'Product removed from cart successfully'
-        };
     }
 
     static async getCartItems(userInput) {
-        const { user_id, page = 1, limit = 10 } = userInput;
+        const { user_id, page = 1, limit = 10, skip_limit = false, skip_not_found_error = false } = userInput;
 
-        // Calculate offset for pagination
-        const offset = (page - 1) * limit;
+        let cartItems, count;
 
-        // Fetch cart items with pagination
-        const { rows: cartItems, count } = await InventoryModel.findAndCountAll({
-            where: { userId: user_id },
-            limit,
-            offset
-        });
+        if (skip_limit) {
+            // Fetch all cart items without pagination
+            const result = await InventoryModel.findAndCountAll({
+                where: { userId: user_id }
+            });
+            cartItems = result.rows;
+            count = result.count;
+        } else {
+            // Calculate offset for pagination
+            const offset = (page - 1) * limit;
 
-        if (cartItems.length === 0) {
-            throw new ClientError('Cart is empty');
+            // Fetch cart items with pagination
+            const result = await InventoryModel.findAndCountAll({
+                where: { userId: user_id },
+                limit,
+                offset
+            });
+            cartItems = result.rows;
+            count = result.count;
+        }
+
+        if (!skip_not_found_error && cartItems.length === 0) {
+            return {
+                message: 'No items found in cart',
+                cartItems: []
+            }
         }
 
         return {
             message: 'Cart items fetched successfully',
             cartItems: cartItems.map(item => item.toJSON()),
-            pagination: {
+            pagination: skip_limit ? null : {
                 total: count,
                 page,
                 limit,

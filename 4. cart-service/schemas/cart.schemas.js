@@ -10,10 +10,10 @@ const addToCartSchema = z.object({
         invalid_type_error: "product_detail_id must be a valid UUID",
     }).uuid(),
     quantity: z.number({
-                required_error: "quantity is required",
-                invalid_type_error: "quantity must be a number",
-                positive_error: "quantity must be a positive number",
-            }).int().positive(),     
+        required_error: "quantity is required",
+        invalid_type_error: "quantity must be a number",
+        positive_error: "quantity must be a positive number",
+    }).int().positive(),
 });
 
 
@@ -23,10 +23,10 @@ const updateQuantityInCartSchema = z.object({
         invalid_type_error: "cart_id must be a valid UUID",
     }).uuid(),
     quantity: z.number({
-                required_error: "quantity is required",
-                invalid_type_error: "quantity must be a number",
-                positive_error: "quantity must be a positive number",
-            }).int().positive(),
+        required_error: "quantity is required",
+        invalid_type_error: "quantity must be a number",
+        positive_error: "quantity must be a positive number",
+    }).int().positive(),
 });
 
 const getCartSchema = z.object({
@@ -53,13 +53,29 @@ const getCartSchema = z.object({
             throw new Error("limit must be a positive number between 1 and 20");
         }
         return parsed;
-    }).optional()
+    }).optional(),
+    skip_limit: z.string()
+        .transform((value) => value === 'true')
+        .refine((val) => typeof val === 'boolean', {
+            message: 'Invalid boolean value',
+        }).optional(),
+    skip_not_found_error: z.string()
+        .transform((value) => value === 'true')
+        .refine((val) => typeof val === 'boolean', {
+            message: 'Invalid boolean value',
+        }).optional(),
 });
 
 const removeItemFromCartSchema = z.object({
-    cart_id: z.string({
-        required_error: "cart_id is required",
-        invalid_type_error: "cart_id must be a valid UUID",
+    cart_ids: z.string({
+        required_error: "cart_ids is required",
+        invalid_type_error: "cart_ids must be a comma-separated string of valid UUIDs",
+    }).transform((val) => val.split(',').map((v) => v.trim())).refine((val) => val.every((id) => z.string().uuid().safeParse(id).success), {
+        message: "cart_ids must be a comma-separated string of valid UUIDs",
+    }),
+    user_id: z.string({
+        required_error: "user_id is required",
+        invalid_type_error: "user_id must be a valid UUID",
     }).uuid(),
 });
 

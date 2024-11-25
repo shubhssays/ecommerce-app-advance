@@ -1,0 +1,30 @@
+{
+  "name": "5.-checkout-service",
+  "version": "1.0.0",
+  "description": "Responsibilities: Coordinates order processing, communicates with Cart and Inventory Services to update product stock and finalize orders. Manages basic checkout logic, such as calculating totals and managing order status. Endpoints: POST /checkout/:userId: Process checkout for user.",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "migrate": "npx sequelize-cli db:migrate",
+    "create-migration": "npx sequelize-cli migration:create --name"
+  },
+  "dependencies": {
+    "axios": "^1.7.7",
+    "body-parser": "^1.20.3",
+    "config": "^3.3.12",
+    "eureka-js-client": "^4.5.0",
+    "express": "^4.21.1",
+    "sequelize": "^6.37.5",
+    "sqlite3": "^5.1.7",
+    "uuid": "^11.0.2",
+    "winston": "^3.17.0",
+    "winston-elasticsearch": "^0.19.0",
+    "winston-logstash-transport": "^2.0.0",
+    "winston-logstash-ts": "^0.2.3",
+    "zod": "^3.23.8"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

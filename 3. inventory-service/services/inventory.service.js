@@ -1,6 +1,7 @@
 const ClientError = require("../errors/client.error");
 const GeneralError = require("../errors/general.error");
 const InventoryModel = require("../config/models/inventory.model");
+const ServerError = require("../../../banking-app-basic/customer-service/errors/server.error");
 
 class InventoryService {
 
@@ -131,6 +132,34 @@ class InventoryService {
         return {
             message: 'Product details fetched successfully',
             product: inventory?.toJSON() || {}
+        };
+    }
+
+    static async deductProductFromInventory(userInput) {
+        const { product_id, product_detail_id, quantity } = userInput;
+
+        // Check if product exists in inventory
+        const product = await InventoryModel.findOne({
+            where: { productId: product_id, productDetailId: product_detail_id }
+        });
+
+        if (!product) {
+            throw new ClientError(`Product with product id ${product_id} and product detail id ${product_detail_id} not found in inventory`);
+        }
+
+        // Check if sufficient quantity is available
+        if (product.quantity < quantity) {
+            throw new ServerError('Insufficient quantity in inventory');
+        }
+
+        const newQuantity = product.quantity - quantity;
+
+        // Deduct quantity from inventory
+        await product.update({ quantity: newQuantity });
+
+        return {
+            message: 'Product quantity deducted from inventory successfully',
+            product: product.toJSON()
         };
     }
 }
