@@ -24,42 +24,42 @@ async function setupProxy() {
 
     // Proxy for Product Service
     app.use('/product', createProxyMiddleware({
-        target: productServiceUrl.replace("localhost", config.get("appNameProduct")),
+        target: productServiceUrl,
         changeOrigin: true,
         pathRewrite: { '^/product': '' },
     }));
 
     // Proxy for Product Details Service
     app.use('/product-details', createProxyMiddleware({
-        target: productDetailsServiceUrl.replace("localhost", config.get("appNameProductDetails")),
+        target: productDetailsServiceUrl,
         changeOrigin: true,
         pathRewrite: { '^/product-detail': '' },
     }));
 
     // Proxy for Inventory Service
     app.use('/inventory', createProxyMiddleware({
-        target: inventoryServiceUrl.replace("localhost", config.get("appNameInventory")),
+        target: inventoryServiceUrl,
         changeOrigin: true,
         pathRewrite: { '^/inventory': '' },
     }));
 
     // Proxy for Cart Service
     app.use('/cart', createProxyMiddleware({
-        target: cartServiceUrl.replace("localhost", config.get("appNameCart")),
+        target: cartServiceUrl,
         changeOrigin: true,
         pathRewrite: { '^/cart': '' },
     }));
 
     // Proxy for Checkout Service
     app.use('/checkout', createProxyMiddleware({
-        target: checkoutServiceUrl.replace("localhost", config.get("appNameCheckout")),
+        target: checkoutServiceUrl,
         changeOrigin: true,
         pathRewrite: { '^/checkout': '' },
     }));
 
     // Proxy for Notification Service
     app.use('/notification', createProxyMiddleware({
-        target: notificationServiceUrl.replace("localhost", config.get("appNameNotification")),
+        target: notificationServiceUrl,
         changeOrigin: true,
         pathRewrite: { '^/notification': '' },
     }));

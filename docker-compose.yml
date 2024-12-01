@@ -169,7 +169,7 @@ services:
       - "3000:3000"  # Exposing the API Gateway on port 3000
     depends_on:
       - notification-service
-    entrypoint: ["sh", "-c", "sleep 15 && npm run start"]
+    entrypoint: ["sh", "-c", "sleep 30 && npm run start"]
     networks:
       - backend    
 
