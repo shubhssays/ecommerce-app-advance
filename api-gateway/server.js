@@ -13,7 +13,7 @@ async function setupProxy() {
     const inventoryServiceUrl = await getServiceUrl(config.get('appNameInventory'));
     const cartServiceUrl = await getServiceUrl(config.get('appNameCart'));
     const checkoutServiceUrl = await getServiceUrl(config.get('appNameCheckout'));
-    // const notificationServiceUrl = await getServiceUrl(config.get('appNameNotification'));
+    const notificationServiceUrl = await getServiceUrl(config.get('appNameNotification'));
 
     // Proxy for Product Service
     app.use('/product', createProxyMiddleware({
@@ -50,12 +50,12 @@ async function setupProxy() {
         pathRewrite: { '^/checkout': '' },
     }));
 
-    // // Proxy for Notification Service
-    // app.use('/notification', createProxyMiddleware({
-    //     target: notificationServiceUrl,
-    //     changeOrigin: true,
-    //     pathRewrite: { '^/notification': '' },
-    // }));
+    // Proxy for Notification Service
+    app.use('/notification', createProxyMiddleware({
+        target: notificationServiceUrl,
+        changeOrigin: true,
+        pathRewrite: { '^/notification': '' },
+    }));
 
     // Start the server after proxies are set up
     app.listen(PORT, () => {

@@ -30,7 +30,7 @@ app.use((req, res, next) => {
 
 app.get("/health", (req, res) => {
     res.status(200).send({
-        message: "Account service is up and running",
+        message: `${config.get("appName")} is up and running`,
     });
 });
 

@@ -3,6 +3,8 @@ const ServerError = require("../../../banking-app-basic/customer-service/errors/
 const Axios = require('../utils/axios');
 const config = require('config');
 const getServiceUrl = require('../utils/eurekaClient');
+const natsClient = require("../utils/nats");
+const topic = config.get('nats.topic');
 
 class CheckoutService {
 
@@ -62,7 +64,7 @@ class CheckoutService {
                 await axios.post(`/deduct`, { quantity: Number(item.quantity), product_detail_id: item.productDetailId, product_id: item.productId });
             } catch (error) {
                 console.log('Error in updating inventory', error);
-                if(error.response && error.response.status == 400) {
+                if (error.response && error.response.status == 400) {
                     throw new ClientError(error.response.data.message);
                 }
                 throw inventoryError;
@@ -74,7 +76,7 @@ class CheckoutService {
 
         try {
             const axios = new Axios(cartServiceUrl);
-            let params= `?user_id=${user_id}`;
+            let params = `?user_id=${user_id}`;
 
             if (cart_ids && cart_ids.length > 0) {
                 params += `&cart_ids=${cart_ids.join(',')}`;
@@ -89,6 +91,11 @@ class CheckoutService {
         }
 
         // Trigger notification
+        await natsClient.publish(topic, {
+            message: 'Checkout successful',
+            totalPrice
+        });
+
         return {
             message: 'Checkout successful',
             totalPrice

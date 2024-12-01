@@ -21,6 +21,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // registering app to eureka server
 require("./utils/eurekaClient");
 
+// Initialize NATS
+require("./utils/nats");
+
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE");
@@ -33,11 +36,6 @@ app.get("/health", (req, res) => {
         message: `${config.get("appName")} is up and running`,
     });
 });
-
-app.use("/", require("./routes/productDetails.routes"));
-
-// this should be the last route
-require("./routes/error.routes")(app);
 
 app.listen(PORT, () => {
     console.log(`${config.get("appName")} is running on PORT ${PORT}`);

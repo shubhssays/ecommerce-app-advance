@@ -4,7 +4,8 @@
   "description": "Responsibilities: Manages specific attributes for each product, like size, price, and design. Acts as a separate service for modularity, enabling isolated updates to product details. Endpoints: GET /products/:id/details: Retrieve specific product details. PUT /products/:id/details: Update product details. DELETE /products/:id/details: Remove product details.",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app.js",
+    "start": "pm2 start app.js",
+    "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "migrate": "npx sequelize-cli db:migrate",
     "create-migration": "npx sequelize-cli migration:create --name"

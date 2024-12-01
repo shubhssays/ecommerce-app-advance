@@ -4,7 +4,8 @@
   "description": "Responsibilities: Coordinates order processing, communicates with Cart and Inventory Services to update product stock and finalize orders. Manages basic checkout logic, such as calculating totals and managing order status. Endpoints: POST /checkout/:userId: Process checkout for user.",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app.js",
+    "start": "pm2 start app.js",
+    "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "migrate": "npx sequelize-cli db:migrate",
     "create-migration": "npx sequelize-cli migration:create --name"
@@ -15,6 +16,7 @@
     "config": "^3.3.12",
     "eureka-js-client": "^4.5.0",
     "express": "^4.21.1",
+    "nats": "^2.28.2",
     "sequelize": "^6.37.5",
     "sqlite3": "^5.1.7",
     "uuid": "^11.0.2",

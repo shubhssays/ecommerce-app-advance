@@ -1,5 +1,5 @@
 {
-    "port": "3005",
+    "port": "3006",
     "eureka": {
         "host": "localhost",
         "port": "8761"
@@ -18,11 +18,10 @@
         "url": "nats://localhost:4222",
         "topic": "notifications.create"
     },
-    "appName": "checkout-service",
+    "appName": "notification-service",
     "appNameCart": "cart-service",
     "appNameProduct": "product-service",
     "appNameProductDetails": "product-details-service",
     "appNameInventory": "inventory-service",
-    "appNameCheckout": "checkout-service",
-    "appNameNotification": "notification-service"
+    "appNameCheckout": "checkout-service"
 }

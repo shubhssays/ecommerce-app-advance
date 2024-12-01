@@ -4,7 +4,8 @@
   "description": "Responsibilities: Manages CRUD operations for products. Stores basic product details like name, description, category, and general attributes. Interfaces with other services for fetching specific details, such as size, price, or design. Endpoints: GET /products: Fetch list of products. POST /products: Add new product. DELETE /products/:id: Remove a product.",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon app.js",
+    "start": "pm2 start app.js",
+    "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "migrate": "npx sequelize-cli db:migrate",
     "create-migration": "npx sequelize-cli migration:create --name"

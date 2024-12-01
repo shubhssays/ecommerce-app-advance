@@ -4,7 +4,8 @@
   "description": "Responsibilities: Manages user carts and stores items added by users. Provides data to Checkout Service for processing the purchase. Endpoints: GET /cart/:userId: Get cart items for a user. POST /cart/:userId: Add item to user cart. DELETE",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon app.js",
+    "start": "pm2 start app.js",
+    "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "migrate": "npx sequelize-cli db:migrate",
     "create-migration": "npx sequelize-cli migration:create --name"
