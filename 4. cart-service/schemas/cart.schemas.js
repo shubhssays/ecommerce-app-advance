@@ -72,7 +72,7 @@ const removeItemFromCartSchema = z.object({
         invalid_type_error: "cart_ids must be a comma-separated string of valid UUIDs",
     }).transform((val) => val.split(',').map((v) => v.trim())).refine((val) => val.every((id) => z.string().uuid().safeParse(id).success), {
         message: "cart_ids must be a comma-separated string of valid UUIDs",
-    }),
+    }).optional(),
     user_id: z.string({
         required_error: "user_id is required",
         invalid_type_error: "user_id must be a valid UUID",
