@@ -1,13 +1,23 @@
 {
-    "port": "3000",
+    "port": "3004",
     "eureka": {
         "host": "eureka",
         "port": "8761"
     },
+    "elasticSearch": {
+        "url": "http://elasticsearch:9200"
+    },
+    "logger": {
+        "level": "info",
+        "logstash": {
+            "host": "elk",
+            "port": "5001"
+        }
+    },
+    "appName": "cart-service",
     "appNameProduct": "product-service",
     "appNameProductDetails": "product-details-service",
     "appNameInventory": "inventory-service",
-    "appNameCart": "cart-service",
     "appNameCheckout": "checkout-service",
     "appNameNotification": "notification-service"
 }

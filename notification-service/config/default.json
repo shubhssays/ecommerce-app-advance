@@ -1,0 +1,27 @@
+{
+    "port": "3006",
+    "eureka": {
+        "host": "eureka",
+        "port": "8761"
+    },
+    "elasticSearch": {
+        "url": "http://elasticsearch:9200"
+    },
+    "logger": {
+        "level": "info",
+        "logstash": {
+            "host": "elk",
+            "port": "5001"
+        }
+    },
+    "nats": {
+        "url": "nats://nats:4222",
+        "topic": "notifications.create"
+    },
+    "appName": "notification-service",
+    "appNameCart": "cart-service",
+    "appNameProduct": "product-service",
+    "appNameProductDetails": "product-details-service",
+    "appNameInventory": "inventory-service",
+    "appNameCheckout": "checkout-service"
+}

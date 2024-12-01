@@ -1,0 +1,182 @@
+#version: '3.8'
+
+services:
+
+  # Eureka Service Discovery
+  eureka:
+    build: ./eureka-service-discovery
+    container_name: eureka
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/eureka/apps"]
+      interval: 15s
+      # retries: 3
+      start_period: 5s
+      # timeout: 10s  
+    networks:
+      - backend
+
+  # NATS Server
+  nats:
+    image: nats:latest
+    container_name: nats-server
+    ports:
+      - "4222:4222"  # NATS client port
+      - "8222:8222"  # NATS monitoring port
+    depends_on:
+      - eureka
+    networks:
+      - backend    
+
+  # ELK Stack services (Elasticsearch, Logstash, and Kibana)
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    container_name: elasticsearch
+    environment:
+      - node.name=elasticsearch
+      - cluster.name=es-docker-cluster
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    depends_on:
+      - nats
+    networks:
+      - backend
+    # healthcheck:
+    #   test: ["CMD-SHELL", "curl -s http://localhost:9200 >/dev/null || exit 1"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.12.0
+    container_name: logstash
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+    ports:
+      - "5044:5044"
+      - "5001:5001/tcp"
+      - "5001:5001/udp"
+      - "9600:9600"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - backend
+    depends_on:
+      - elasticsearch
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.12.0
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    networks:
+      - backend
+    depends_on:
+      - logstash
+
+  # Product Service
+  product-service:
+    build: ./product-service
+    container_name: product-service
+    ports:
+      - "3001:3001"
+    depends_on:
+      - kibana
+    entrypoint: ["sh", "-c", "sleep 15 && npm run start"]  
+    networks:
+      - backend
+
+  # Product Details Service
+  product-details-service:
+    build: ./product-details-service
+    container_name: product-details-service
+    ports:
+      - "3002:3002"
+    depends_on:
+      - product-service
+    entrypoint: ["sh", "-c", "sleep 15 && npm run start"]
+    networks:
+      - backend
+
+  # Inventory Service
+  inventory-service:
+    build: ./inventory-service
+    container_name: inventory-service
+    ports:
+      - "3003:3003"
+    depends_on:
+      - product-details-service
+    entrypoint: ["sh", "-c", "sleep 15 && npm run start"]
+    networks:
+      - backend
+
+  # Cart Service
+  cart-service:
+    build: ./cart-service
+    container_name: cart-service
+    ports:
+      - "3004:3004"
+    depends_on:
+      - inventory-service
+    entrypoint: ["sh", "-c", "sleep 15 && npm run start"]
+    networks:
+      - backend
+
+  # Checkout Service
+  checkout-service:
+    build: ./checkout-service
+    container_name: checkout-service
+    ports:
+      - "3005:3005"
+    depends_on:
+      - cart-service
+    entrypoint: ["sh", "-c", "sleep 15 && npm run start"]
+    networks:
+      - backend
+
+  # notification Service
+  notification-service:
+    build: ./notification-service
+    container_name: notification-service
+    ports:
+      - "3006:3006"
+    depends_on:
+      - checkout-service
+    entrypoint: ["sh", "-c", "sleep 15 && npm run start"]
+    networks:
+      - backend
+
+  # API Gateway Service
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "3000:3000"  # Exposing the API Gateway on port 3000
+    depends_on:
+      - notification-service
+    entrypoint: ["sh", "-c", "sleep 15 && npm run start"]
+    networks:
+      - backend    
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  elasticsearch-data:
+    driver: local    
