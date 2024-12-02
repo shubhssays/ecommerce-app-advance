@@ -129,7 +129,7 @@ class ProductService {
 
         try {
             const axios = new Axios(productDetailsUrl);
-            productDetailsResponse = await axios.get(`/product/${product_id}`);
+            productDetailsResponse = await axios.get(`/${product_id}`);
         } catch (error) {
             console.log('Error in fetching product details', error);
             throw new ServerError('Error in fetching product details');

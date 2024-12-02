@@ -1,8 +1,10 @@
 const ClientError = require("../errors/client.error");
 const GeneralError = require("../errors/general.error");
+const ServerError = require("../errors/server.error");
 const ProductDetailsModel = require("../config/models/productDetails.model");
 const getServiceUrl = require('../utils/eurekaClient');
 const Axios = require('../utils/axios');
+const config = require('config');
 
 class ProductDetailsService {
     static async addProductDetails(userInput) {
@@ -147,7 +149,7 @@ class ProductDetailsService {
 
         try {
             const axios = new Axios(productServiceUrl);
-            productResponse = await axios.get(`/product/${product_detail_id}?skip_not_found_error=${skip_not_found_error}&only_product=${only_product}`);
+            productResponse = await axios.get(`/${productId}?skip_not_found_error=${skip_not_found_error}&only_product=${only_product}`);
         } catch (error) {
             console.log('Error in fetching product details', error);
             throw productDetailError;

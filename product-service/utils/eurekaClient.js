@@ -10,9 +10,10 @@ const eurekaClient = new Eureka({
     instance: {
         app: instanceId, // Name of your service
         instanceId, // Unique ID for the instance
-        hostName: 'localhost',
-        ipAddr: '127.0.0.1',
-        statusPageUrl: `http://localhost:${config.get("port")}/health`, // URL for the health/status page
+        // hostName: 'localhost',
+        hostName: instanceId,
+        ipAddr: instanceId,
+        statusPageUrl: `http://${instanceId}:${config.get("port")}/health`, // URL for the health/status page
         port: {
             '$': config.get("port"), // Port your service is running on
             '@enabled': true,
