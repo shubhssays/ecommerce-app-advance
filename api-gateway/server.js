@@ -64,12 +64,12 @@ async function setupProxy() {
         pathRewrite: { '^/notification': '' },
     }));
 
-    app.get('/', (req, res) => {
-        res.send('API Gateway is running');
+    app.get('/health', (req, res) => {
+        res.send('API Gateway is up and running');
     });
 
     // Start the server after proxies are set up
-    app.listen(PORT, '0.0.0.0', () => {
+    app.listen(PORT, () => {
         console.log(`API Gateway running on http://localhost:${PORT}`);
     });
 }

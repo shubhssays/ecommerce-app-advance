@@ -166,9 +166,10 @@ services:
     build: ./api-gateway
     container_name: api-gateway
     ports:
-      - "3000:3000"  # Exposing the API Gateway on port 3000
+      - "5555:5555"  # Exposing the API Gateway on port 5555
     depends_on:
       - notification-service
+    # entrypoint: ["sh", "-c", "sleep 30 && npm run start"]
     entrypoint: ["sh", "-c", "sleep 30 && npm run start"]
     networks:
       - backend
@@ -176,6 +177,7 @@ services:
 networks:
   backend:
     driver: bridge
+    name: backend
 
 volumes:
   elasticsearch-data:
