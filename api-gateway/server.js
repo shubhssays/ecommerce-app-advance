@@ -69,7 +69,7 @@ async function setupProxy() {
     });
 
     // Start the server after proxies are set up
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
         console.log(`API Gateway running on http://localhost:${PORT}`);
     });
 }

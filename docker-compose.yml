@@ -171,7 +171,7 @@ services:
       - notification-service
     entrypoint: ["sh", "-c", "sleep 30 && npm run start"]
     networks:
-      - backend    
+      - backend
 
 networks:
   backend:
