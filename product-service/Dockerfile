@@ -8,6 +8,9 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
+# Install sequelize-cli globally
+RUN npm install -g sequelize-cli
+
 # Copy the rest of the application code
 COPY . .
 
@@ -15,4 +18,4 @@ COPY . .
 EXPOSE 3001
 
 # Command to run your application
-CMD ["npm", "start"]
+CMD ["sh", "-c", "npx sequelize-cli db:migrate && npm start"]

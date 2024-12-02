@@ -8,11 +8,14 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
+# Install sequelize-cli globally
+RUN npm install -g sequelize-cli
+
 # Copy the rest of the application code
 COPY . .
 
 # Expose port that your service is running on
 EXPOSE 3004
 
-# Command to run your application
-CMD ["npm", "start"]
+# Command to run migration and then start your application
+CMD ["sh", "-c", "npx sequelize-cli db:migrate && npm start"]

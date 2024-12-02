@@ -97,7 +97,7 @@ services:
       - "3001:3001"
     depends_on:
       - kibana
-    entrypoint: ["sh", "-c", "sleep 15 && npm run start"]  
+    entrypoint: ["sh", "-c", "sleep 15 && npx sequelize-cli db:migrate && npm run start"]  
     networks:
       - backend
 
@@ -109,7 +109,7 @@ services:
       - "3002:3002"
     depends_on:
       - product-service
-    entrypoint: ["sh", "-c", "sleep 15 && npm run start"]
+    entrypoint: ["sh", "-c", "sleep 15 && npx sequelize-cli db:migrate && npm run start"]
     networks:
       - backend
 
@@ -121,7 +121,7 @@ services:
       - "3003:3003"
     depends_on:
       - product-details-service
-    entrypoint: ["sh", "-c", "sleep 15 && npm run start"]
+    entrypoint: ["sh", "-c", "sleep 15 && npx sequelize-cli db:migrate && npm run start"]
     networks:
       - backend
 
@@ -133,7 +133,7 @@ services:
       - "3004:3004"
     depends_on:
       - inventory-service
-    entrypoint: ["sh", "-c", "sleep 15 && npm run start"]
+    entrypoint: ["sh", "-c", "sleep 15 && npx sequelize-cli db:migrate && npm run start"]
     networks:
       - backend
 
@@ -145,7 +145,7 @@ services:
       - "3005:3005"
     depends_on:
       - cart-service
-    entrypoint: ["sh", "-c", "sleep 15 && npm run start"]
+    entrypoint: ["sh", "-c", "sleep 15 && npx sequelize-cli db:migrate && npm run start"]
     networks:
       - backend
 
